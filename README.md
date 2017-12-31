@@ -1,2 +1,3 @@
 # lekssays.com
-Source Code of My Official Website
+Source code of my personal website lekssays.com.
+Some parts are adapted from HTML5 Web Terminal by Andrew M Barfield
