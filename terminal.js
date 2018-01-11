@@ -5,17 +5,6 @@ $(function() {
   var term = new Terminal('#input-line .cmdline', '#container output');
   term.init();
   
-  // Update the clock every second
-  setInterval(function() {
-    function r(cls, deg) {
-      $('.' + cls).attr('transform', 'rotate('+ deg +' 50 50)')
-    }
-    var d = new Date()
-    r("sec", 6*d.getSeconds())  
-    r("min", 6*d.getMinutes())
-    r("hour", 30*(d.getHours()%12) + d.getMinutes()/2)
-  }, 1000);
-  
 });
 
 var util = util || {};
@@ -31,7 +20,7 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   var output_ = document.querySelector(outputContainer);
 
   const CMDS_ = [
-    'clear', 'date', 'echo', 'help', 'uname', 'whoami', 'education', 'security', 'programming', 'interests', 'contact', 'blog'
+    'whoami', 'education', 'security', 'programming', 'interests', 'love', 'media' ,'contact', 'blog', 'clear', 'help' 
   ];
   
   var fs_ = null;
@@ -118,17 +107,9 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
           output_.innerHTML = '';
           this.value = '';
           return;
-        case 'date':
-          output( new Date() );
-          break;
-        case 'echo':
-          output( args.join(' ') );
-          break;
         case 'help':
-          output('<div class="ls-files">' + CMDS_.join('<br>') + '</div>');
-          break;
-        case 'uname':
-          output(navigator.appVersion);
+          var result = "<h2>Help</h2><p><b>whoami</b>: display all my information.<br><b>education</b>: display all my information about my education.<br><b>security</b>: display all my information about my achievements in security.<br><b>programming</b>: display all my information about my achievements in programming.<br><b>interests</b>: display all my interests.<br><b>love</b>: are you curious about my love?<br><b>media</b>: display where I have been mentioned.<br><b>contact</b>: Say hi<br><b>blog</b>: Link of my blog<br><b>clear</b>: clear terminal<br><b>help</b>: display this menu.</p>";
+          output(result);
           break;
         case 'education':
           var result = "<h3>Education</h3>"+"<p>Master of Science in Software Engineering at Al Akhawayn University in Ifrane, Morocco with minors in Communication and Mathematics (In progress)<br>Baccalaureate in Physics in 2014 from Al Atlas High School in Douirane, Morocco";
@@ -158,6 +139,16 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
           var result = "<h1>Ahmed Lekssays</h1><p>Author, Speaker, and Security Researcher</p><p>I am 21 years old. I am from a small village near Imintanout called Douirane. I am a student at Al Akhawayn University in Ifrane, Morocco, security analyst, and  author. I am interested in algorithms, data structures, computer security, new technologies, and communication theories. I am an open-source activist. I love sharing code, love, and knowledge. I love blogging because it is a creative way to share knowledge, to meet new people, and to discover new cultures. I love operating systems because they teach you the core of computers.</p>" + "<h3>Information Security Analyst</h3><p>Acknowledged by WhatsApp after finding a security issue in their iOS Application.<br>Acknowledged by Twitter after finding a security issue in their iOS Application.<br>Author at InfoSec Institute<br>Acknowledged by Al Akhawayn University in Ifrane after finding a security issues in their Web Applications.<br>Acknowledged by Mohammed First University in Oujda after finding a security issue in their Web Application.<br>Acknowledged by Banque Centrale Populaire after finding a security issue in their Web Application.<br>Security Analyst at Al Akhawayn University in Ifrane, Morocco<br>Security Analyst at Vul9 Security Solutions<br>Speaker in Several Cyber Security and IT Conferences<br>International Conference on Big Data, Cloud, and Application with a paper entitled “Build a Simple Cloud Server using the Open Hardware Technology” in Tetouan, Morocco<br>Network Security – Ecole Hassania Des Travaux Publiques<br>JNJD INPT – INPT in Rabat<br>OWASP AppSec Africa 2017 in Casablanca, Morocco<br>WhiteHat Camp in Marrakech, Morocco<br>National Conference on Cyber Security and Digital Threats in Ifrane, Morocco<p>" + "<h3>Competitive Programmer</h3><p>6th Place in the Moroccan Collegiate Programming Contest 2017 with my team \"Slowpoke\"<br>Finalist of the Arab Collegiate Programming Contest 2017 with my team \"Slowpoke\"<br>Judge and Problem Setter at Code IT 2016, Ecole Hassania des Traveaux Publics, Casablanca, Morocco<br>Problem Setter Girls Code I 2016 (ENSIAS, Rabat) and Girls Code II 2017 (UIR, Rabat)<br>Winner of the Moroccan Collegiate Programming Contest 2016 with my team “PastGlory“<br>Finalist of the Arab Collegiate Programming Contest 2016 with my team “PastGlory“ <br>Contestant in the Moroccan Collegiate Programming Contest 2015 with my team “return 0;“<p>"+"<h3> Web Developer and Entrepreneur</h3>Web Development Tutor – E-nitiate Summer Camp 2016<br>Web Development Tutor – Computer Science for Innovation Club – Web Development Workshops<br>NASA Apps Space Challenge – 1st Place in Morocco<br>Brackets Project – An Open-Source Contests Management Platform<br>Altair Project – An Open-Source API for Intelligent Drone Driving<br>oudadOS – An Open-Source Lightweight Operating System for Educational Purposes<br>More projects on my <a href=\"https://github.com/Lekssays\">Github</a></p><h3>Interests</h3><p>Algorithms, Data Structures, Problem Solving, Cyber Security , Volleyball, Literature, Communication, Photography, Internet of Things , Operating Systems, Cloud Computing , Geometry , Big Data , Volunteering, Traveling, Open Source Technologies...</p>"
           output(result);
           break;
+        case 'media':
+          var result = "<h3>I was mentioned is several media in Morocco and abroad in different langauge.. Here are some:</h3><h2>Arabic</h2><blockquote>2M: <a href=\"https://www.youtube.com/watch?v=cJdjrgiKSuI\">https://www.youtube.com/watch?v=cJdjrgiKSuI</a></blockquote><blockquote>CNN Arabic: <a href=\"https://arabic.cnn.com/scitech/2015/08/01/morocco-young-white-hat\"> https://arabic.cnn.com/scitech/2015/08/01/morocco-young-white-hat</a></blockquote><blockquote>Imintanoute Press: <a href=\"http://www.imintanoutpress.com/الشاب-احمد-لكسايس-ابن-منطقة-ادويران-يف\">http://www.imintanoutpress.com/الشاب-احمد-لكسايس-ابن-منطقة-ادويران-يف</a></blockquote><blockquote>Goud: <a href=\"http://www.goud.ma/هادو-كيشرفوا-لبلاد-أحمد-لكسايس-يافع-مغ-79267/\">http://www.goud.ma/هادو-كيشرفوا-لبلاد-أحمد-لكسايس-يافع-مغ-79267/</a></blockquote><blockquote>Al Arabiya: <a href=\"http://www.alarabiya.net/ar/technology/2015/08/03/واتس-آب-تشكر-باحثا-مغربيا-على-حماية-ملايين-المستخدمين-من-ثغرة.html\">http://www.alarabiya.net/ar/technology/2015/08/03/واتس-آب-تشكر-باحثا-مغربيا-على-حماية-ملايين-المستخدمين-من-ثغرة.html</a></blockquote><blockquote>Febrayer: <a href=\"https://www.febrayer.com/227366.html\">https://www.febrayer.com/227366.html</a></blockquote><blockquote>Al Yaoume 24: <a href=\"http://m.alyaoum24.com/346429.html\">http://m.alyaoum24.com/346429.html</a></blockquote><h2>French</strong></h2><blockquote>Medi1TV:<a href=\"http://www.medi1tv.com/fr/ahmed-lekssays-explique-comment-il-a-découvert-une-faille-de-sécurité-sur-infos-42987\">http://www.medi1tv.com/fr/ahmed-lekssays-explique-comment-il-a-découvert-une-faille-de-sécurité-sur-infos-42987</a></blockquote><blockquote>Telquel:<a href=\"http://telquel.ma/2015/07/30/marocain-19-ans-decouvre-faille-whatsapp_1457919\">http://telquel.ma/2015/07/30/marocain-19-ans-decouvre-faille-whatsapp_1457919</a></blockquote><blockquote>Welovebuzz: <a href=\"http://www.welovebuzz.com/un-marocain-de-19-ans-trouve-une-faille-sur-whatsapp/\">http://www.welovebuzz.com/un-marocain-de-19-ans-trouve-une-faille-sur-whatsapp/</a></blockquote><blockquote>Oujda City: <a href=\"http://www.oujdacity.net/national-article-114580-fr/luniversite-al-akhawayn-difrane-au-rendez-vous-avec-la-5eme-edition-du-morrocan-collegiate-programming-contest.html\">http://www.oujdacity.net/national-article-114580-fr/luniversite-al-akhawayn-difrane-au-rendez-vous-avec-la-5eme-edition-du-morrocan-collegiate-programming-contest.html</a></blockquote><h2>English</h2><blockquote>Morocco World News: <a href=\"https://www.moroccoworldnews.com/2015/08/164726/moroccan-student-discovers-security-loophole-in-whatsapp/\">https://www.moroccoworldnews.com/2015/08/164726/moroccan-student-discovers-security-loophole-in-whatsapp/</a></blockquote><h2>Spanish</h2> <blockquote>ABC <a href=\"http://www.abc.es/tecnologia/moviles-aplicaciones/20150731/abci-whatsapp-apple-201507311532.html\">http://www.abc.es/tecnologia/moviles-aplicaciones/20150731/abci-whatsapp-apple-201507311532.html</a></blockquote><blockquote>Los Andes: <a href=\"http://losandes.com.ar/article/atencion-una-falla-en-whatsapp-para-iphone-permite-robar-todos-los-chats-y-contactos\">http://losandes.com.ar/article/atencion-una-falla-en-whatsapp-para-iphone-permite-robar-todos-los-chats-y-contactos</a></blockquote><blockquote>20Minutos <a href=\"http://www.20minutos.es/noticia/2526807/0/fallo-whatsapp/hackear-iphone/robar-chats/\">http://www.20minutos.es/noticia/2526807/0/fallo-whatsapp/hackear-iphone/robar-chats/</a></blockquote><h2>Dutch</h2><blockquote>Nieuws Marokko <a href=\"http://nieuws.marokko.nl/38033/marokkaanse-slimmerik-ontdekt-beveiligingslek-in-whatsapp/\">http://nieuws.marokko.nl/38033/marokkaanse-slimmerik-ontdekt-beveiligingslek-in-whatsapp/</a></blockquote><h2>Portuguese</h2><blockquote>Mundo Positivo: <a href=\"http://www.mundopositivo.com.br/noticias/dicaspositivo/20371316-falha_no_whatsapp_permite_roubar_conversa_e_dados_pessoais.html\">http://www.mundopositivo.com.br/noticias/dicaspositivo/20371316-falha_no_whatsapp_permite_roubar_conversa_e_dados_pessoais.html</a></blockquote><blockquote>Techtudo: <a href=\"http://www.techtudo.com.br/noticias/noticia/2015/08/whatsapp-tem-bug-que-permite-roubar-conversas-e-dados-de-contatos.html\">http://www.techtudo.com.br/noticias/noticia/2015/08/whatsapp-tem-bug-que-permite-roubar-conversas-e-dados-de-contatos.html</a></blockquote>";
+          output(result);
+          break;
+        case 'love':
+          output("<h3>Sabrinaa...</h3>");
+          break;
+        case 'sabrina':
+            output("<h3>Love...</h3>");
+            break;
         default:
           if (cmd) {
             output(cmd + ': command not found');
@@ -206,7 +197,7 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   //
   return {
     init: function() {
-      output('<h1>Ahmed Lekssays</h1><h3>Author, Speaker, and Security Researcher<br>I regulary share my thought on my blog: <a href=\"https://blog.lekssays.com/\">https://blog.lekssays.com</a></h3><p>Enter "help" for more information.</p><p>' + new Date() + ' -- This website is built with love <3</p>');
+      output('<h1>Ahmed Lekssays</h1><h3>Author, Speaker, and Security Researcher<br>I regulary share my thoughts on my blog: <a href=\"https://blog.lekssays.com/\">https://blog.lekssays.com</a></h3><p>Enter "help" for more information.</p><p> -- This website is built with love <3</p>');
     },
     output: output
   }
