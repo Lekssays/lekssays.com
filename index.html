@@ -1,21 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ahmed Lekssays</title>
-    <link href="https://fonts.googleapis.com/css?family=Inconsolata"
-          rel="stylesheet" type="text/css" />
-    <link href="terminal.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <div id="container">
-      <output></output>
-      <div id="input-line" class="input-line">
-        <div class="prompt"></div><div><input class="cmdline" autofocus /></div>
-      </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #1a1b26;
+            --bg-terminal: #2E3440;
+            --text-primary: #D8DEE9;
+            --text-green: #A3BE8C;
+            --text-blue: #88C0D0;
+            --text-yellow: #EBCB8B;
+            --text-red: #BF616A;
+            --text-purple: #B48EAD;
+            --text-gray: #4C566A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        #terminal {
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            background-color: var(--bg-terminal);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background-color: #353b4a;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .terminal-button:hover {
+            transform: scale(1.1);
+        }
+
+        .terminal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 0 15px;
+            overflow-x: auto;
+        }
+
+        .terminal-tab {
+            padding: 5px 10px;
+            border: 1px solid var(--text-green);
+            border-radius: 4px;
+            color: var(--text-green);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .terminal-tab.active {
+            background-color: var(--text-green);
+            color: var(--bg-dark);
+        }
+
+        .terminal-tab:hover:not(.active) {
+            background-color: rgba(163, 190, 140, 0.2);
+        }
+
+        .close {
+            background-color: var(--text-red);
+        }
+
+        .minimize {
+            background-color: var(--text-yellow);
+        }
+
+        .maximize {
+            background-color: var(--text-green);
+        }
+
+        .terminal-title {
+            color: var(--text-primary);
+            font-size: 14px;
+            opacity: 0.8;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .terminal-content {
+            padding: 15px;
+            height: calc(100% - 95px);
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .ascii-art {
+            color: var(--text-green);
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--text-blue);
+        }
+
+        .contact-item a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: var(--text-blue);
+        }
+
+        .contact-item i {
+            color: var(--text-yellow);
+            width: 20px;
+            text-align: center;
+        }
+
+        .section-header {
+            color: var(--text-yellow);
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.1em;
+        }
+
+        .publication-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .publication-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--text-blue);
+        }
+
+        .publication-year {
+            color: var(--text-yellow);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .publication-title {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .publication-authors {
+            color: var(--text-blue);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .publication-venue {
+            color: var(--text-green);
+            font-size: 0.9em;
+        }
+
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 10px;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .prompt {
+            color: var(--text-green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .prompt span {
+            color: var(--text-blue);
+        }
+
+        .cursor {
+            width: 8px;
+            height: 16px;
+            background-color: var(--text-primary);
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        .output {
+            margin: 10px 0;
+            padding: 10px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-out forwards;
+            color: var(--text-primary);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-terminal);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-blue);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            background-color: var(--text-gray);
+            color: var(--text-primary);
+        }
+
+        .service-section {
+            margin-bottom: 20px;
+        }
+
+        .service-item {
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .service-item::before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: var(--text-blue);
+        }
+
+        @media (max-width: 768px) {
+            .terminal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .terminal-buttons {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .terminal-title {
+                font-size: 12px;
+            }
+
+            .terminal-tab {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+
+            .terminal-content {
+                padding: 10px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .publication-card {
+                padding: 10px;
+            }
+
+            .publication-year,
+            .publication-title,
+            .publication-authors,
+            .publication-venue {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="terminal">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <span class="terminal-button close"></span>
+                <span class="terminal-button minimize"></span>
+                <span class="terminal-button maximize"></span>
+            </div>
+            <div class="terminal-title">guest@lekssays.com</div>
+        </div>
+        <div class="terminal-tabs">
+            <button class="terminal-tab active" onclick="switchTab('home')">./home</button>
+            <button class="terminal-tab" onclick="switchTab('research')">./research</button>
+            <button class="terminal-tab" onclick="switchTab('initiatives')">./initiatives</button>
+        </div>
+        <div class="terminal-content" id="terminal-content"></div>
     </div>
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="terminal.js"></script>
-  </body>
+
+    <script>
+        const sections = {
+            home: {
+                welcome: `
+      .----.
+     /      \\   Ahmed Lekssays 🇲🇦 
+    |  o  o  |  
+    |   ||   |  Security Researcher 
+    |   __   |  @ Qatar Computing Research Institute
+     \\______/
+      _|__|_      
+     /      \\   <* Learning how machines work and fail *>
+    |        |  
+    |________|  
+     |  ||  |   
+     |  ||  |   
+     '--''--' `,
+                bio: `Dr. Ahmed Lekssays is a Security Researcher at Qatar Computing Research Institute. He obtained his Ph.D. from the University of Insubria in Varese, Italy in 2022 funded by EU's Marie Skłodowska-Curie Actions, and his master’s and bachelor’s degrees from Al Akhawayn University in Ifrane, Morocco. He helped many organizations secure their applications such as Microsoft. He is a competitive programmer and an open-source software advocate. He is a member of the Scientific Committee of the Moroccan Association for Computing Sciences.`,
+                education: [
+                    {
+                        period: "2019-2022",
+                        degree: "Ph.D. in Computer Science",
+                        institution: "University of Insubria, Varese, Italy",
+                        details: [
+                            "Marie Skłodowska-Curie Actions Fellow",
+                            "Research: Blockchain-based secure data management",
+                            "Part of RAIS project (EU's Horizon 2020)",
+                            "Supervisors: Prof. Elena Ferrari and Prof. Barbara Carminati"
+                        ]
+                    },
+                    {
+                        period: "2014-2019",
+                        degree: "Combined Bachelor and Master in Software Engineering",
+                        institution: "Al Akhawayn University in Ifrane, Morocco",
+                        details: [
+                            "Concentration: Information Security and Risk Management",
+                            "Thesis: Malware Detection and Classification using Convolutional Neural Networks",
+                        ]
+                    }
+                ],
+                awards: [
+                    {
+                        category: "Research",
+                        title: "Marie Skłodowska-Curie Actions Fellowship",
+                        year: "2019"
+                    },
+                    {
+                        category: "Competitive Programming",
+                        title: "Arab Collegiate Programming Contest - Maghreb Champion",
+                        year: "2018",
+                        extra: "3x ACPC Finalist"
+                    },
+                    {
+                        category: "Industry",
+                        title: "Microsoft Hall of Fame",
+                        description: "Found and reported critical security vulnerabilities"
+                    }
+                ],
+                contacts: [
+                    { icon: 'fa-envelope', text: '{firstname}@lekssays.com', link: '' },
+                    { icon: 'fa-globe', text: 'www.lekssays.com', link: 'https://www.lekssays.com' },
+                    { icon: 'fa-blog', text: 'blog.lekssays.com', link: 'https://blog.lekssays.com' },
+                    { icon: 'fa-brands fa-github', text: 'github.com/Lekssays', link: 'https://github.com/Lekssays' },
+                    { icon: 'fa-brands fa-linkedin', text: 'linkedin.com/in/lekssays', link: 'https://www.linkedin.com/in/ahmed-lekssays-2b118b110/' }
+                ]
+            },
+            research: {
+                interests: [
+                    "Malware Analysis",
+                    "Software Security",
+                    "Distributed Systems",
+                    "Blockchain",
+                    "Applied Cryptography"
+                ],
+                service: {
+                    committees: [
+                        "Program Committee Member ICDE 2024",
+                        "Artifact Evaluation Committee Member NDSS 2024",
+                        "Artifact Evaluation Committee Member USENIX 2025"
+                    ],
+                    reviewer: [
+                        "IEEE Transactions on Information Forensics and Security",
+                        "ACM Transactions on Privacy and Security",
+                        "IEEE Transactions on Dependable and Secure Computing",
+                        "TheWebConf 2022",
+                        "VLDB 2022",
+                        "CODASPY 2021"
+                    ]
+                },
+                publications: [
+                    {
+                        year: 2024,
+                        title: "Semantic ranking for automated adversarial technique annotation in security text",
+                        authors: ["U Kumarasinghe", "A Lekssays", "HT Sencar", "S Boughorbel", "C Elvitigala"],
+                        venue: "Proceedings of the 19th ACM Asia Conference on Computer and Communications Security",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2024,
+                        title: "Kavach: A personalized secure and private decentralized learning setup for Human Activity Recognition",
+                        authors: ["D Roy", "A Lekssays", "S Girdzijauskas", "E Ferrari", "B Carminati"],
+                        venue: "Available at SSRN 4714780",
+                        type: "Preprint"
+                    },
+                    {
+                        year: 2023,
+                        title: "Private, fair and secure collaborative learning framework for human activity recognition",
+                        authors: ["D Roy", "A Lekssays", "S Girdzijauskas", "B Carminati", "E Ferrari"],
+                        venue: "Adjunct Proceedings of the 2023 ACM International Joint Conference on Pervasive and Ubiquitous Computing",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2023,
+                        title: "MalCon: A blockchain-based malware containment framework for Internet of Things",
+                        authors: ["A Lekssays", "B Carminati", "E Ferrari"],
+                        venue: "Computer Networks",
+                        type: "Journal"
+                    },
+                    {
+                        year: 2023,
+                        title: "Early-stage ransomware detection based on pre-attack internal API calls",
+                        authors: ["F Coglio", "A Lekssays", "B Carminati", "E Ferrari"],
+                        venue: "International Conference on Advanced Information Networking and Applications",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2023,
+                        title: "Privacy-preserving Decentralized Learning of Knowledge Graph Embeddings.",
+                        authors: ["AT Hoang", "A Lekssays", "B Carminati", "E Ferrari"],
+                        venue: "EDBT/ICDT Workshops",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2023,
+                        title: "Metasoma: Decentralized and CollaborativeEarly-Stage Detection of IoT Botnets",
+                        authors: ["L Giaretta", "A Lekssays", "B Carminati", "E Ferrari", "S Girdzijauskas"],
+                        venue: "",
+                        type: "Other"
+                    },
+                    {
+                        year: 2022,
+                        title: "MalRec: A Blockchain-based Malware Recovery Framework for Internet of Things",
+                        authors: ["A Lekssays", "G Sirigu", "B Carminati", "E Ferrari"],
+                        venue: "Proceedings of the 17th International Conference on Availability, Reliability and Security",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2021,
+                        title: "PAutoBotCatcher: A blockchain-based privacy-preserving botnet detector for Internet of Things",
+                        authors: ["A Lekssays", "L Landa", "B Carminati", "E Ferrari"],
+                        venue: "Computer Networks",
+                        type: "Journal"
+                    },
+                    {
+                        year: 2021,
+                        title: "LiMNet: early-stage detection of iot botnets with lightweight memory networks",
+                        authors: ["L Giaretta", "A Lekssays", "B Carminati", "E Ferrari", "Š Girdzijauskas"],
+                        venue: "European Symposium on Research in Computer Security",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2020,
+                        title: "A Novel Approach for Android Malware Detection and Classification using Convolutional Neural Networks.",
+                        authors: ["A Lekssays", "B Falah", "S Abufardeh"],
+                        venue: "ICSOFT",
+                        type: "Conference"
+                    }
+                ],
+                selected_publications: [
+                    {
+                        year: 2024,
+                        title: "Semantic ranking for automated adversarial technique annotation in security text",
+                        authors: ["U Kumarasinghe", "A Lekssays", "HT Sencar", "S Boughorbel", "C Elvitigala"],
+                        venue: "Proceedings of the 19th ACM Asia Conference on Computer and Communications Security",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2021,
+                        title: "LiMNet: early-stage detection of iot botnets with lightweight memory networks",
+                        authors: ["L Giaretta", "A Lekssays", "B Carminati", "E Ferrari", "Š Girdzijauskas"],
+                        venue: "European Symposium on Research in Computer Security",
+                        type: "Conference"
+                    },
+                    {
+                        year: 2021,
+                        title: "PAutoBotCatcher: A blockchain-based privacy-preserving botnet detector for Internet of Things",
+                        authors: ["A Lekssays", "L Landa", "B Carminati", "E Ferrari"],
+                        venue: "Computer Networks",
+                        type: "Journal"
+                    },
+                    {
+                        year: 2023,
+                        title: "MalCon: A blockchain-based malware containment framework for Internet of Things",
+                        authors: ["A Lekssays", "B Carminati", "E Ferrari"],
+                        venue: "Computer Networks",
+                        type: "Journal"
+                    },          
+                ]
+            },
+            initiatives: {
+                projects: [
+                    {
+                        title: "The Missing Semester (Moroccan Edition)",
+                        description: "Bridging the gap between theoretical computer science courses and practical applications in Moroccan universities."
+                    },
+                    {
+                        title: "Competitive Programming",
+                        role: "Head of Scientific Committee",
+                        org: "Moroccan Association for Computing Sciences",
+                        description: "Leading initiatives to advance computing sciences in Morocco through academic and professional development programs."
+                    }
+                ]
+            }
+        };
+
+        function createPrompt(command = '') {
+            return `<div class="command-line">
+                <span class="prompt">guest@<span>lekssays</span>:~$ ${command}</span>
+            </div>`;
+        }
+
+        function renderHome() {
+            const content = document.getElementById('terminal-content');
+            content.innerHTML = `
+                ${createPrompt('cat welcome.txt')}
+                <div class="output">
+                    <pre class="ascii-art">${sections.home.welcome}</pre>
+                </div>
+
+                ${createPrompt('cat about.txt')}
+                <div class="output">${sections.home.bio}</div>
+
+                ${createPrompt('cat research/selected.txt')}
+                <div class="section-header">📃 Selected Publications</div>
+                ${sections.research.selected_publications.map(pub => `
+                    <div class="publication-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div class="publication-year">[${pub.year}]</div>
+                            <div class="tag">${pub.type}</div>
+                        </div>
+                        <div class="publication-title">${pub.title}</div>
+                        <div class="publication-authors">${pub.authors}</div>
+                        <div class="publication-venue">${pub.venue}</div>
+                    </div>
+                `).join('')}
+
+                ${createPrompt('cat education.txt')}
+                <div class="section-header">📚 Education History</div>
+                ${sections.home.education.map(edu => `
+                    <div class="publication-card">
+                        <div class="publication-year">[${edu.period}]</div>
+                        <div class="publication-title">${edu.degree}</div>
+                        <div class="publication-venue">${edu.institution}</div>
+                        <div class="publication-authors">
+                            ${edu.details.map(detail => `• ${detail}`).join('<br>')}
+                        </div>
+                    </div>
+                `).join('')}
+
+                ${createPrompt('cat awards.txt')}
+                <div class="section-header">🏆 Honors & Awards</div>
+                ${sections.home.awards.map(award => `
+                    <div class="publication-card">
+                        <div class="publication-year">[${award.category}]</div>
+                        <div class="publication-title">${award.title}</div>
+                        ${award.year ? `<div class="publication-venue">${award.year}</div>` : ''}
+                        ${award.extra ? `<div class="publication-authors">${award.extra}</div>` : ''}
+                        ${award.description ? `<div class="publication-authors">${award.description}</div>` : ''}
+                    </div>
+                `).join('')}
+
+                ${createPrompt('cat social.txt')}
+                <div class="contact-grid">
+                    ${sections.home.contacts.map(contact => `
+                        <div class="contact-item">
+                            <i class="fas ${contact.icon}"></i>
+                            <a href="${contact.link}" target="_blank">${contact.text}</a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderResearch() {
+            const content = document.getElementById('terminal-content');
+            content.innerHTML = `
+                ${createPrompt('cat interests.txt')}
+                <div class="section-header">🔬 Research Interests</div>
+                <div class="publication-card">
+                    ${sections.research.interests.map(interest => `
+                        <div class="publication-venue">• ${interest}</div>
+                    `).join('')}
+                </div>
+
+                ${createPrompt('cat services.txt')}
+                <div class="section-header">🎓 Academic Service</div>
+                <div class="publication-card">
+                    <div class="publication-year">[Program Committees]</div>
+                    ${sections.research.service.committees.map(committee => `
+                        <div class="service-item">${committee}</div>
+                    `).join('')}
+                    
+                    <div class="publication-year" style="margin-top:15px">[Journal/Conference Reviewer]</div>
+                    ${sections.research.service.reviewer.map(review => `
+                        <div class="service-item">${review}</div>
+                    `).join('')}
+                </div>
+
+                ${createPrompt('cat publications.txt')}
+                <div class="section-header">📚 Publications</div>
+                ${sections.research.publications.map(pub => `
+                    <div class="publication-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div class="publication-year">[${pub.year}]</div>
+                            <div class="tag">${pub.type}</div>
+                        </div>
+                        <div class="publication-title">${pub.title}</div>
+                        <div class="publication-authors">${pub.authors}</div>
+                        <div class="publication-venue">${pub.venue}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderInitiatives() {
+            const content = document.getElementById('terminal-content');
+            content.innerHTML = `
+                ${createPrompt('cat projects.txt')}
+                <div class="section-header">🚀 Projects & Initiatives</div>
+                ${sections.initiatives.projects.map(project => `
+                    <div class="publication-card">
+                        <div class="publication-year">[PROJECT]</div>
+                        <div class="publication-title">${project.title}</div>
+                        ${project.role ? `<div class="publication-authors">${project.role} - ${project.org}</div>` : ''}
+                        <div class="publication-venue">${project.description}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.terminal-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            switch (tab) {
+                case 'home':
+                    renderHome();
+                    break;
+                case 'research':
+                    renderResearch();
+                    break;
+                case 'initiatives':
+                    renderInitiatives();
+                    break;
+            }
+        }
+
+        // Initial render
+        renderHome();
+    </script>
+</body>
+
 </html>
